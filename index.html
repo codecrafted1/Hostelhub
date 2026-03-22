@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HostelHub – Home</title>
+  <link rel="stylesheet" href="./Main.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
+</head>
+<body>
+<!-- LOGIN / REGISTER OVERLAY -->
+<div id="auth-overlay" class="auth-overlay">
+  <div class="auth-card">
+    <span class="close-auth" id="closeAuth">&times;</span>
+    <h2 id="auth-title">Login</h2>
+
+    <form id="auth-form">
+      <div class="input-group">
+        <label for="auth-name" id="name-label" style="display:none;">Full Name</label>
+        <input type="text" id="auth-name" placeholder="Enter Full Name" style="display:none;">
+      </div>
+
+      <div class="input-group">
+        <label for="auth-email">Email</label>
+        <input type="email" id="auth-email" placeholder="Enter Email" required>
+      </div>
+
+      <div class="input-group">
+        <label for="auth-password">Password</label>
+        <input type="password" id="auth-password" placeholder="Enter Password" required>
+      </div>
+
+      <button type="submit" id="auth-btn">Login</button>
+      <p class="switch-text">
+        Don't have an account? <a href="#" id="switchAuth">Register</a>
+      </p>
+    </form>
+  </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const overlay = document.getElementById("auth-overlay");
+  const closeAuth = document.getElementById("closeAuth");
+  const switchAuth = document.getElementById("switchAuth");
+  const authTitle = document.getElementById("auth-title");
+  const authBtn = document.getElementById("auth-btn");
+  const nameInput = document.getElementById("auth-name");
+  const nameLabel = document.getElementById("name-label");
+  const form = document.getElementById("auth-form");
+  
+  let isLogin = true;
+
+  // 🔐 Predefined user dataset
+  const users = [
+    { name: "Admin", email: "admin@hostelhub.com", password: "admin123", role: "Administrator" },
+    { name: "Warden", email: "warden@hostelhub.com", password: "warden123", role: "Warden" },
+    { name: "Student1", email: "student1@hostelhub.com", password: "stud123", role: "Student" },
+    { name: "Student2", email: "student2@hostelhub.com", password: "stud456", role: "Student" },
+  ];
+
+  // ✅ Check if already logged in
+  const loggedInUser = localStorage.getItem("loggedInUser");
+  if (loggedInUser) {
+    overlay.style.display = "none"; // Hide overlay if user already logged in
+  } else {
+    overlay.style.display = "flex"; // Show overlay initially
+  }
+
+  // 🔁 Toggle Login/Register
+  switchAuth.addEventListener("click", (e) => {
+    e.preventDefault();
+    isLogin = !isLogin;
+
+    if (isLogin) {
+      authTitle.textContent = "Login";
+      authBtn.textContent = "Login";
+      nameInput.style.display = "none";
+      nameLabel.style.display = "none";
+      document.querySelector(".switch-text").innerHTML =
+        `Don't have an account? <a href="#" id="switchAuth">Register</a>`;
+    } else {
+      authTitle.textContent = "Register";
+      authBtn.textContent = "Register";
+      nameInput.style.display = "block";
+      nameLabel.style.display = "block";
+      document.querySelector(".switch-text").innerHTML =
+        `Already have an account? <a href="#" id="switchAuth">Login</a>`;
+    }
+
+    // Reattach listener
+    document.getElementById("switchAuth").addEventListener("click", switchAuth.click);
+  });
+
+  // 🚀 Handle Login/Register
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("auth-email").value.trim();
+    const password = document.getElementById("auth-password").value.trim();
+    const name = document.getElementById("auth-name").value.trim();
+
+    if (isLogin) {
+      // LOGIN
+      const validUser = users.find(u => u.email === email && u.password === password);
+      if (validUser) {
+        alert(`Welcome ${validUser.name} (${validUser.role})!`);
+        localStorage.setItem("loggedInUser", JSON.stringify(validUser)); // ✅ Save login session
+        overlay.style.display = "none";
+      } else {
+        alert("Invalid credentials. Please try again!");
+      }
+    } else {
+      // REGISTER
+      if (!email || !password || !name) {
+        alert("Please fill all fields!");
+        return;
+      }
+      const exists = users.some(u => u.email === email);
+      if (exists) {
+        alert("User already exists!");
+      } else {
+        users.push({ name, email, password, role: "Student" });
+        alert("Registration successful! You can now log in.");
+        isLogin = true;
+        authTitle.textContent = "Login";
+        authBtn.textContent = "Login";
+        nameInput.style.display = "none";
+        nameLabel.style.display = "none";
+      }
+    }
+  });
+
+  // ❌ Prevent manual close before login
+  closeAuth.addEventListener("click", () => {
+    alert("You must log in to continue!");
+  });
+});
+</script>
+
+
+  <!-- HEADER -->
+  <header class="main-header">
+    <div class="logo">
+      <img src="./i2.png" alt="HostelHub Logo" />
+      <h1>HostelHub</h1>
+    </div>
+
+    <nav class="nav-buttons">
+  <button id="dashboard-btn"><i class="fa-solid fa-house"></i> Dashboard</button>
+  <button id="doc-btn"><i class="fa-solid fa-book"></i> Documentation</button>
+  <button id="help-btn"><i class="fa-solid fa-circle-question"></i> Help</button>
+  <button id="feedback-btn"><i class="fa-solid fa-comment"></i> Feedback</button>
+  <button id="login-btn"><i class="fa-solid fa-right-to-bracket"></i> Login</button>
+</nav>
+<script>// Redirect to another page when Dashboard button is clicked
+document.getElementById("dashboard-btn").addEventListener("click", () => {
+  window.location.href = "dashboard.html"; // <-- change to your actual dashboard page path
+});
+</script>
+    
+  </header>
+  <!-- HERO CARD -->
+  <section class="hero-card">
+    <div class="hero-content">
+      <h1>Welcome to <span>HostelHub</span></h1>
+      <p>
+        Your one-stop solution for managing hostel activities, complaints, meals,
+        and feedback. Simplify your hostel life with smart tools designed for
+        students and administrators alike.
+      </p>
+      <button class="hero-btn">
+        <i class="fa-solid fa-rocket"></i> Get Started
+      </button>
+    </div>
+  </section>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const overlay = document.getElementById("auth-overlay");
+  const closeAuth = document.getElementById("closeAuth");
+  const switchAuth = document.getElementById("switchAuth");
+  const authTitle = document.getElementById("auth-title");
+  const authBtn = document.getElementById("auth-btn");
+  const nameInput = document.getElementById("auth-name");
+  const nameLabel = document.getElementById("name-label");
+  const form = document.getElementById("auth-form");
+
+  let isLogin = true;
+
+  // 🔐 Predefined dataset
+  const users = [
+    { name: "Admin", email: "admin@hostelhub.com", password: "admin123", role: "Administrator" },
+    { name: "Warden", email: "warden@hostelhub.com", password: "warden123", role: "Warden" },
+    { name: "Student1", email: "student1@hostelhub.com", password: "stud123", role: "Student" },
+    { name: "Student2", email: "student2@hostelhub.com", password: "stud456", role: "Student" },
+  ];
+
+  // ✅ Check if already logged in (only per session)
+  const sessionUser = sessionStorage.getItem("sessionUser");
+  if (sessionUser) {
+    overlay.style.display = "none";
+  } else {
+    overlay.style.display = "flex";
+  }
+
+  // 🔁 Toggle Login/Register
+  switchAuth.addEventListener("click", (e) => {
+    e.preventDefault();
+    isLogin = !isLogin;
+
+    if (isLogin) {
+      authTitle.textContent = "Login";
+      authBtn.textContent = "Login";
+      nameInput.style.display = "none";
+      nameLabel.style.display = "none";
+      document.querySelector(".switch-text").innerHTML =
+        `Don't have an account? <a href="#" id="switchAuth">Register</a>`;
+    } else {
+      authTitle.textContent = "Register";
+      authBtn.textContent = "Register";
+      nameInput.style.display = "block";
+      nameLabel.style.display = "block";
+      document.querySelector(".switch-text").innerHTML =
+        `Already have an account? <a href="#" id="switchAuth">Login</a>`;
+    }
+
+    // Reattach listener
+    document.getElementById("switchAuth").addEventListener("click", switchAuth.click);
+  });
+
+  // 🚀 Handle Login/Register
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("auth-email").value.trim();
+    const password = document.getElementById("auth-password").value.trim();
+    const name = document.getElementById("auth-name").value.trim();
+
+    if (isLogin) {
+      // LOGIN
+      const validUser = users.find(u => u.email === email && u.password === password);
+      if (validUser) {
+        alert(`Welcome ${validUser.name} (${validUser.role})!`);
+        sessionStorage.setItem("sessionUser", JSON.stringify(validUser)); // ✅ Save for current session only
+        overlay.style.display = "none";
+      } else {
+        alert("Invalid credentials. Please try again!");
+      }
+    } else {
+      // REGISTER
+      if (!email || !password || !name) {
+        alert("Please fill all fields!");
+        return;
+      }
+      const exists = users.some(u => u.email === email);
+      if (exists) {
+        alert("User already exists!");
+      } else {
+        users.push({ name, email, password, role: "Student" });
+        alert("Registration successful! You can now log in.");
+        isLogin = true;
+        authTitle.textContent = "Login";
+        authBtn.textContent = "Login";
+        nameInput.style.display = "none";
+        nameLabel.style.display = "none";
+      }
+    }
+  });
+
+  // ❌ Disable manual close
+  closeAuth.addEventListener("click", () => {
+    alert("You must log in to continue!");
+  });
+});
+</script>
+
+  <!-- OVERLAY FOR GET STARTED -->
+<div class="getstarted-overlay" id="getStartedOverlay">
+  <div class="getstarted-card">
+    <button class="close-getstarted" id="closeGetStarted">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+
+    <h1><i class="fa-solid fa-user-graduate"></i> Choose Your Portal</h1>
+    <p>Select the section you wish to explore.</p>
+
+    <div class="portal-options">
+      <div class="portal-card student-card" id="studentPortal">
+        <i class="fa-solid fa-user"></i>
+        <h2>Student Profile</h2>
+        <p>Access your dashboard, complaints, and mess details.</p>
+      </div>
+
+      <div class="portal-card admin-card" id="adminPortal">
+        <i class="fa-solid fa-user-tie"></i>
+        <h2>Administration</h2>
+        <p>Manage hostel operations, updates, and feedback.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  // Open overlay on Get Started click
+document.querySelector(".hero-btn").addEventListener("click", () => {
+  document.getElementById("getStartedOverlay").style.display = "flex";
+});
+
+// Close overlay
+document.getElementById("closeGetStarted").addEventListener("click", () => {
+  document.getElementById("getStartedOverlay").style.display = "none";
+});
+
+// Redirect actions
+document.getElementById("studentPortal").addEventListener("click", () => {
+  window.location.href = "Student.html"; // Change to your actual path
+});
+
+document.getElementById("adminPortal").addEventListener("click", () => {
+  window.location.href = "Admin.html"; // Change to your actual path
+});
+
+</script>
+
+  <!-- AUTO-SCROLLING 3D CARDS SECTION -->
+  <section class="scroll-loop">
+    <div class="cards-track">
+      <div class="card"><i class="fa-solid fa-bullhorn"></i><h2>Announcements</h2><p>Stay updated with the latest hostel news, notices, and events.</p></div>
+      <div class="card"><i class="fa-solid fa-utensils"></i><h2>Meal Menu</h2><p>Check daily or weekly mess menus at a glance.</p></div>
+      <div class="card"><i class="fa-solid fa-screwdriver-wrench"></i><h2>Complaints</h2><p>Report maintenance issues directly to hostel management.</p></div>
+      <div class="card"><i class="fa-solid fa-comments"></i><h2>Feedback</h2><p>Share your thoughts on food, cleanliness, or facilities.</p></div>
+      <div class="card"><i class="fa-solid fa-user"></i><h2>Profile</h2><p>View or update your hostel details and preferences.</p></div>
+
+      <!-- Duplicate for seamless loop -->
+      <div class="card"><i class="fa-solid fa-bullhorn"></i><h2>Announcements</h2><p>Stay updated with the latest hostel news, notices, and events.</p></div>
+      <div class="card"><i class="fa-solid fa-utensils"></i><h2>Meal Menu</h2><p>Check daily or weekly mess menus at a glance.</p></div>
+      <div class="card"><i class="fa-solid fa-screwdriver-wrench"></i><h2>Complaints</h2><p>Report maintenance issues directly to hostel management.</p></div>
+      <div class="card"><i class="fa-solid fa-comments"></i><h2>Feedback</h2><p>Share your thoughts on food, cleanliness, or facilities.</p></div>
+      <div class="card"><i class="fa-solid fa-user"></i><h2>Profile</h2><p>View or update your hostel details and preferences.</p></div>
+    </div>
+  </section>
+
+  <!-- DOCUMENTATION OVERLAY -->
+  <div class="documentation-overlay" id="documentationOverlay">
+    <div class="documentation-card">
+      <button class="close-doc" id="closeDoc"><i class="fa-solid fa-xmark"></i></button>
+      <h1>Hostel Documentation</h1>
+      <h2>🏠 Rules & Regulations</h2>
+      <ul>
+        <li>Hostel gates close at 10:00 PM.</li>
+        <li>No loud music or gatherings after 9:30 PM.</li>
+        <li>Keep rooms and surroundings clean.</li>
+        <li>Visitors allowed only with prior permission.</li>
+      </ul>
+
+      <h2>💰 Fees & Payments</h2>
+      <ul>
+        <li>Annual Hostel Fee: ₹35,000</li>
+        <li>Mess Fee: ₹3,000/month</li>
+        <li>Security Deposit: ₹5,000 (Refundable)</li>
+      </ul>
+
+      <h2>🕒 Timings</h2>
+      <ul>
+        <li>Breakfast: 7:30 AM – 9:00 AM</li>
+        <li>Lunch: 12:30 PM – 2:00 PM</li>
+        <li>Dinner: 7:30 PM – 9:00 PM</li>
+      </ul>
+
+      <h2>📞 Contact</h2>
+      <p>For any inquiries, reach out to <strong>hostelhelp@hostelhub.com</strong> or visit the office between 9 AM – 5 PM.</p>
+    </div>
+  </div>
+  <!-- HELP OVERLAY -->
+<div class="help-overlay" id="helpOverlay">
+  <div class="help-card">
+    <button class="close-help" id="closeHelp"><i class="fa-solid fa-xmark"></i></button>
+    <h1><i class="fa-solid fa-circle-question"></i> Help Center</h1>
+
+    <div class="qa">
+      <h2>Q1: How do I register for HostelHub?</h2>
+      <p>Go to the Login section and click on “Register”. Fill in your student ID and basic details to create your account.</p>
+    </div>
+
+    <div class="qa">
+      <h2>Q2: How can I report a complaint?</h2>
+      <p>Click the “Complaints” card and fill in the form. Your issue will be directly sent to the hostel maintenance team.</p>
+    </div>
+
+    <div class="qa">
+      <h2>Q3: How do I change my mess menu preferences?</h2>
+      <p>Navigate to the “Meal Menu” section and choose the “Customize Menu” option.</p>
+    </div>
+
+    <div class="qa">
+      <h2>Q4: Who can I contact for urgent issues?</h2>
+      <p>You can reach out to the warden via <strong>warden@hostelhub.com</strong> or call the hostel help desk during working hours.</p>
+    </div>
+
+    <div class="qa">
+      <h2>Q5: How can I view hostel announcements?</h2>
+      <p>Announcements are regularly updated in the “Announcements” card or dashboard section.</p>
+    </div>
+  </div>
+</div>
+<!-- FEEDBACK OVERLAY -->
+<div class="feedback-overlay" id="feedbackOverlay">
+  <div class="feedback-card">
+    <button class="close-feedback" id="closeFeedback">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <h1><i class="fa-solid fa-comment-dots"></i> Feedback</h1>
+    <p>We value your opinion! Please share your feedback below.</p>
+
+    <form id="feedbackForm">
+      <label for="name">Name</label>
+      <input type="text" id="name" placeholder="Your Name" required />
+
+      <label for="email">Email</label>
+      <input type="email" id="email" placeholder="Your Email" required />
+
+      <label for="message">Message</label>
+      <textarea id="message" rows="5" placeholder="Your feedback..." required></textarea>
+
+      <label class="rating-label">Rate your experience</label>
+      <div class="stars">
+        <i class="fa-regular fa-star"></i>
+        <i class="fa-regular fa-star"></i>
+        <i class="fa-regular fa-star"></i>
+        <i class="fa-regular fa-star"></i>
+        <i class="fa-regular fa-star"></i>
+      </div>
+
+      <button type="submit" class="submit-feedback">
+        <i class="fa-solid fa-paper-plane"></i> Submit Feedback
+      </button>
+    </form>
+  </div>
+</div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section social">
+        <h3>Follow Us</h3>
+        <div class="social-icons">
+          <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+          <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+      </div>
+
+      <div class="footer-section links">
+        <h3>Quick Links</h3>
+        <a href="#">Dashboard</a>
+        <a href="#">Announcements</a>
+        <a href="#">Feedback</a>
+        <a href="#">Help</a>
+      </div>
+
+      <div class="footer-section contact">
+        <h3>Contact Us</h3>
+        <form class="footer-form">
+          <input type="email" placeholder="Your Email" required />
+          <button type="submit"><i class="fa-solid fa-paper-plane"></i> Submit</button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 HostelHub. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+    <!-- CHATBOT FLOATING BUTTON -->
+<button id="chatbotBtn" class="chatbot-btn">
+  <i class="fa-solid fa-robot"></i>
+</button>
+
+<!-- CHATBOT OVERLAY -->
+<div id="chatbotOverlay" class="chatbot-overlay">
+  <div class="chatbot-card">
+    <button id="closeChatbot" class="close-chatbot"><i class="fa-solid fa-xmark"></i></button>
+    <h2><i class="fa-solid fa-comments"></i> HostelHub Chatbot</h2>
+    <div class="chat-window" id="chatWindow">
+      <div class="bot-message">👋 Hi there! I’m your HostelHub assistant. How can I help you today?</div>
+    </div>
+
+    <div class="predefined-questions">
+      <button class="question-btn">📜 What are the hostel rules?</button>
+      <button class="question-btn">🍽️ What's today's meal menu?</button>
+      <button class="question-btn">🧹 How to report maintenance issue?</button>
+      <button class="question-btn">💰 How to pay hostel fees?</button>
+      <button class="question-btn">☎️ How to contact warden?</button>
+    </div>
+  </div>
+</div>
+<style>
+    /* Floating Chatbot Button */
+.chatbot-btn {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background: linear-gradient(145deg, #4a90e2, #2c3e50);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 65px;
+  height: 65px;
+  font-size: 26px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  z-index: 1000;
+}
+
+.chatbot-btn:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+/* Chatbot Overlay */
+.chatbot-overlay {
+  display: none;
+  position: fixed;
+  bottom: 100px;
+  right: 40px;
+  width: 340px;
+  height: 450px;
+  background: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  z-index: 999;
+  flex-direction: column;
+  overflow: hidden;
+  animation: popIn 0.4s ease forwards;
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Chatbot Card */
+.chatbot-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: linear-gradient(180deg, #f8f9fa, #ffffff);
+  border-radius: 15px;
+  padding: 15px;
+}
+
+.close-chatbot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  color: #333;
+  cursor: pointer;
+}
+
+.chatbot-card h2 {
+  text-align: center;
+  margin-top: 25px;
+  color: #2c3e50;
+}
+
+/* Chat Window */
+.chat-window {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.bot-message,
+.user-message {
+  margin: 8px 0;
+  padding: 10px;
+  border-radius: 10px;
+  max-width: 85%;
+}
+
+.bot-message {
+  background: #000000;
+  align-self: flex-start;
+}
+
+.user-message {
+  background: #0e08c0;
+  align-self: flex-end;
+}
+
+/* Predefined Question Buttons */
+.predefined-questions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.question-btn {
+  background: #4a90e2;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.question-btn:hover {
+  background: #2c3e50;
+  transform: scale(1.05);
+}
+</style>
+<script>// Chatbot button toggle
+const chatbotBtn = document.getElementById("chatbotBtn");
+const chatbotOverlay = document.getElementById("chatbotOverlay");
+const closeChatbot = document.getElementById("closeChatbot");
+const chatWindow = document.getElementById("chatWindow");
+const questionBtns = document.querySelectorAll(".question-btn");
+
+chatbotBtn.addEventListener("click", () => {
+  chatbotOverlay.style.display = "flex";
+});
+
+closeChatbot.addEventListener("click", () => {
+  chatbotOverlay.style.display = "none";
+});
+
+// Predefined replies
+const responses = {
+  "📜 What are the hostel rules?":
+    "📝 Hostel gates close at 10 PM. Visitors allowed with permission. Keep your rooms clean.",
+  "🍽️ What's today's meal menu?":
+    "🍛 Today's menu: Breakfast - Poha, Lunch - Dal Chawal, Dinner - Paneer Butter Masala.",
+  "🧹 How to report maintenance issue?":
+    "🧰 You can report maintenance issues under the 'Complaints' section on your dashboard.",
+  "💰 How to pay hostel fees?":
+    "💵 Hostel fees can be paid online through your student portal or directly at the office.",
+  "☎️ How to contact warden?":
+    "📞 You can contact the warden via email: warden@hostelhub.com or phone: +91 9876543210."
+};
+
+// Handle question click
+questionBtns.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const userMsg = document.createElement("div");
+    userMsg.classList.add("user-message");
+    userMsg.textContent = btn.textContent;
+    chatWindow.appendChild(userMsg);
+
+    const botMsg = document.createElement("div");
+    botMsg.classList.add("bot-message");
+    botMsg.textContent = responses[btn.textContent] || "🤖 Sorry, I don't understand that question yet!";
+    chatWindow.appendChild(botMsg);
+
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+  });
+});
+</script>
+
+
+
+  <script src="./Main.js"></script>
+</body>
+</html>
